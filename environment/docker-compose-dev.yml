@@ -1,0 +1,25 @@
+networks:
+  debtcrusher-network:
+    driver: bridge
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: debtcrusher-mysql
+    volumes:
+      - ./data/db_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d/
+    command: [
+      '--character-set-server=utf8mb4',
+      '--collation-server=utf8mb4_unicode_ci',
+      '--skip-character-set-client-handshake'
+    ]
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: debtcrusher
+    ports:
+      # Khớp mặc định DB_PORT trong application.yaml (localhost:3306) — chạy `docker compose`
+      # xong là app kết nối được ngay, không cần set thêm env var nào.
+      - "3306:3306"
+    networks:
+      - debtcrusher-network

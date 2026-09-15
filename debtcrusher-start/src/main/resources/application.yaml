@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: debtcrusher
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:debtcrusher}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+  jpa:
+    database: mysql
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: none # Schema quản lý bằng script ở environment/mysql/init, không để Hibernate tự sinh bảng
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+  jackson:
+    serialization:
+      indent-output: true
+
+server:
+  port: ${PORT:8080}
+
+# JWT — auth MVP: register/login/JWT thuần, không refresh-token rotation.
+jwt:
+  secret: ${JWT_SECRET:change-this-secret-in-prod-min-256-bit-xxxxxxxxxxxxxxxx}
+  expiration: ${JWT_EXPIRATION:86400000} # 24h, tính bằng millisecond
+
+resilience4j:
+  ratelimiter:
+    instances:
+      authApi: # POST /auth/register, /auth/login — chống brute-force
+        limitForPeriod: 5
+        limitRefreshPeriod: 1m
+        timeoutDuration: 0
+        registerHealthIndicator: true
+
+management:
+  health:
+    ratelimiters:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,ratelimiters
+  endpoint:
+    health:
+      show-details: always

@@ -1,0 +1,6 @@
+# node_modules trên máy host là build cho Windows (esbuild/oxlint/@tailwindcss/oxide có native binary) —
+# lọt vào context sẽ ghi đè lên node_modules Linux vừa `npm ci` trong container và làm build hỏng.
+node_modules
+dist
+.env
+.git

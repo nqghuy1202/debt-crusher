@@ -1,0 +1,77 @@
+# Chạy trên VPS: cd environment && docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+#
+# Khác docker-compose-dev.yml ở chỗ: có thêm backend + frontend (dev chỉ có mysql, vì trước giờ chạy
+# `mvn spring-boot:run` / `npm run dev` thẳng trên máy); mysql/backend/frontend đều chỉ bind
+# 127.0.0.1 (không public ra internet) — Nginx cài trên chính VPS (không phải container, xem
+# environment/nginx/app.conf) là thứ DUY NHẤT public ra ngoài qua port 80/443, proxy vào 2 cổng
+# backend/frontend; cổng mysql chỉ để SSH tunnel debug khi cần.
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: debtcrusher-mysql
+    restart: unless-stopped
+    volumes:
+      - ./data/db_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d/
+    command: [
+      '--character-set-server=utf8mb4',
+      '--collation-server=utf8mb4_unicode_ci',
+      '--skip-character-set-client-handshake'
+    ]
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: debtcrusher
+      # User riêng cho app thay vì dùng root — image mysql tự tạo user này với quyền full trên MYSQL_DATABASE.
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${DB_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      # Chỉ bind localhost — không public ra internet, chỉ để SSH tunnel vào debug khi cần (xem DEPLOY.md).
+      - "127.0.0.1:3306:3306"
+    networks:
+      - debtcrusher-network
+
+  backend:
+    build:
+      context: ..
+      dockerfile: debtcrusher-start/Dockerfile
+    container_name: debtcrusher-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: debtcrusher
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      PORT: 8080
+    ports:
+      - "127.0.0.1:8080:8080"
+    networks:
+      - debtcrusher-network
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+      args:
+        # "" = gọi API cùng origin, khớp cách environment/nginx/app.conf route theo path-prefix.
+        VITE_API_BASE_URL: ""
+    container_name: debtcrusher-frontend
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:80"
+    networks:
+      - debtcrusher-network
+
+networks:
+  debtcrusher-network:
+    driver: bridge

@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+/* Tailwind v4: kích hoạt dark mode theo class ".dark" trên <html> thay vì chỉ
+   theo prefers-color-scheme, để ThemeToggle điều khiển được thủ công. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "IBM Plex Sans", system-ui, "Segoe UI", Roboto, sans-serif;
+
+  /* Màu thương hiệu — lấy đúng hex "Avalanche blue" đã dùng ở biểu đồ so sánh
+     chiến lược (validated CVD, xem dataviz skill) để nhất quán, thay vì
+     blue-600 mặc định của Tailwind mà gần như mọi UI do AI tạo đều dùng. */
+  --color-brand-50: #eef5fd;
+  --color-brand-100: #d7e9fa;
+  --color-brand-200: #b0d3f5;
+  --color-brand-400: #4f8fdd;
+  --color-brand-500: #2a78d6;
+  --color-brand-600: #1f63b8;
+  --color-brand-700: #184e93;
+}
+
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+html {
+  font-family: var(--font-sans);
+}
+
+body {
+  @apply bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100;
+}
+
+/* <select> mũi tên custom: đặt background-position bằng đúng padding-left của chính select đó, để
+   khoảng cách viền-phải→mũi tên = khoảng cách viền-trái→chữ (native appearance không đảm bảo điều
+   này). Dùng chung 1 SVG, chỉ khác gap qua --select-arrow-gap. */
+select.select-arrow {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--select-arrow-gap, 0.75rem) center;
+}
+
+/* Thanh cuộn mảnh, hợp với giao diện fintech tối giản */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-slate-300) transparent;
+}
+.dark * {
+  scrollbar-color: var(--color-slate-700) transparent;
+}

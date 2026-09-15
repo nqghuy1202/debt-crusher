@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.debtcrusher</groupId>
+        <artifactId>debt-crusher</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>debtcrusher-application</artifactId>
+
+    <properties>
+        <maven.compiler.source>26</maven.compiler.source>
+        <maven.compiler.target>26</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <!--
+        Layer application: orchestrate domain + infrastructure port (AuthAppService dùng
+        UserRepository + PasswordEncoder). Chỉ lấy spring-security-crypto (BCryptPasswordEncoder)
+        thay vì cả spring-security-web/security-config — module này không biết gì về HTTP/JWT,
+        việc đó thuộc debtcrusher-controller (SecurityConfig + JwtTokenProvider).
+    -->
+    <dependencies>
+        <dependency>
+            <groupId>org.debtcrusher</groupId>
+            <artifactId>debtcrusher-domain</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.debtcrusher</groupId>
+            <artifactId>debtcrusher-infrastructure</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

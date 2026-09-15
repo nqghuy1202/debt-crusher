@@ -1,0 +1,10 @@
+# Áp dụng khi build debtcrusher-start/Dockerfile với context = repo root (xem docker-compose.prod.yml).
+# Không có file này, `docker build` gửi nguyên repo (kể cả .git, target/ cũ, data MySQL, node_modules)
+# làm context — chậm và có rủi ro COPY nhầm class file build sẵn ở bytecode version khác.
+.git
+.idea
+target/
+**/target/
+environment/data/
+frontend/node_modules/
+frontend/dist/
