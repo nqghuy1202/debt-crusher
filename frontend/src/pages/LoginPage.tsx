@@ -10,8 +10,8 @@ import { AuthShell } from "../components/AuthShell";
 const inputClass =
   "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:ring-1 focus:ring-brand-500/30 focus:outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100";
 
-// Tài khoản demo có sẵn 20 khoản nợ mẫu (xem environment/mysql/init hoặc memory
-// debtcrusher-frontend-plan) — cho phép người xem thử app không cần tự đăng ký/nhập liệu.
+// Tài khoản demo có sẵn 20 khoản nợ mẫu, tự seed lúc backend khởi động nếu chưa có (xem
+// DemoDataSeeder ở debtcrusher-application) — cho phép người xem thử app không cần tự đăng ký/nhập liệu.
 const DEMO_CREDENTIALS = { email: "demo@debtcrusher.vn", password: "Demo@2026" };
 
 export function LoginPage() {
