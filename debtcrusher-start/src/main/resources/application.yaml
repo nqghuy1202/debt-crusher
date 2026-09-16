@@ -32,7 +32,7 @@ resilience4j:
   ratelimiter:
     instances:
       authApi: # POST /auth/register, /auth/login — chống brute-force
-        limitForPeriod: 5
+        limitForPeriod: 20
         limitRefreshPeriod: 1m
         timeoutDuration: 0
         registerHealthIndicator: true
