@@ -40,6 +40,16 @@
                 <!-- Không được quản lý qua dependencyManagement (chỉ import BOM dependency, không phải parent),
                      nên phải ghim version thủ công, khớp version Spring Boot toàn dự án. -->
                 <version>4.2.0-M1</version>
+                <!-- Không dùng spring-boot-starter-parent nên không có execution mặc định gắn goal
+                     repackage vào phase package — phải khai báo tay, nếu không mvn package chỉ ra jar
+                     thường (thiếu Main-Class trong manifest), chạy `java -jar` báo "no main manifest attribute". -->
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

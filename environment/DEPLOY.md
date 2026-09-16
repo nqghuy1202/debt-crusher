@@ -10,14 +10,8 @@ ra ngoài, chỉ backend trong cùng docker network truy cập được.
 Browser → Nginx (host, :80/:443) → :3000 (container frontend) / :8080,/auth,/debts,/payoff,... (container backend) → MySQL (container, chỉ nội bộ)
 ```
 
-Ubuntu **18.04 LTS (bionic)** — panel VPS chỉ có bản này, không có 20.04/22.04/24.04. Domain giả định
-`YOUR_DOMAIN` — thay bằng domain thật của bạn ở mọi bước.
-
-> **18.04 đã hết hỗ trợ bảo mật chính thức từ 04/2023** (chỉ còn bản trả phí Ubuntu Pro/ESM), và
-> Docker cũng ngừng build package mới cho bionic từ đó (bản cuối `24.0.2`, tháng 5/2023) — vẫn cài và
-> chạy được bình thường (mọi hướng dẫn dưới đây đã tính đến các khác biệt của 18.04), nhưng bạn nên
-> biết là hệ điều hành gốc sẽ không còn được vá lỗi bảo mật kernel/OS trừ khi đăng ký ESM miễn phí (xem
-> cuối bước 2). Nếu sau này panel có thêm 22.04/24.04, nên nâng cấp VPS.
+Ubuntu **24.04 LTS (noble)** — hỗ trợ chính thức đến 04/2029, không cần workaround gì đặc biệt.
+Domain giả định `YOUR_DOMAIN` — thay bằng domain thật của bạn ở mọi bước.
 
 ## 1. Trỏ domain về VPS
 
@@ -37,19 +31,11 @@ SSH vào VPS bằng thông tin nhà cung cấp gửi qua email (`ssh root@<IP_VP
 ```bash
 apt update && apt upgrade -y
 
-# libseccomp2 mặc định trên 18.04 (2.3.x) quá cũ so với runc mà Docker hiện đại cần — không nâng cấp
-# trước thì lúc `docker run` hay gặp lỗi "unable to init seccomp: error loading seccomp filter into
-# kernel". Lệnh dưới lấy bản libseccomp2 mới nhất mà bionic-security/bionic-updates có sẵn.
-apt install -y libseccomp2
-
-# Docker + Docker Compose plugin — script get.docker.com tự nhận diện bionic và cài đúng
-# docker-ce 24.0.2 (bản cuối cùng còn build cho 18.04, dừng cập nhật từ 05/2023, nhưng vẫn chạy tốt).
+# Docker + Docker Compose plugin — script get.docker.com tự nhận diện noble và cài docker-ce bản mới nhất.
 curl -fsSL https://get.docker.com | sh
 docker compose version   # kiểm tra plugin compose đã có, không hiện lỗi "command not found"
 
-# Nginx (reverse proxy) + git. KHÔNG dùng certbot/python3-certbot-nginx từ apt trên 18.04 — bản trong
-# kho universe của bionic quá cũ (0.31, từ 2019), hay lỗi vặt với Nginx mới; cài certbot qua snap ở
-# bước 7 thay vì apt.
+# Nginx (reverse proxy) + git.
 apt install -y nginx git
 
 # Firewall: chỉ mở SSH + HTTP/HTTPS. Port 3000/8080/3306 KHÔNG cần mở — chúng chỉ bind 127.0.0.1
@@ -58,20 +44,6 @@ ufw allow OpenSSH
 ufw allow 'Nginx Full'
 ufw enable
 ```
-
-Nếu `docker run hello-world` vẫn báo lỗi seccomp sau khi đã `apt install libseccomp2`: bản trong
-bionic-updates lúc đó có thể vẫn chưa đủ mới — lấy thẳng bản từ Ubuntu 20.04 (focal), tương thích ngược
-tốt:
-
-```bash
-curl -fsSL -o /tmp/libseccomp2.deb \
-  http://security.ubuntu.com/ubuntu/pool/main/libs/libseccomp/libseccomp2_2.5.1-1ubuntu1~20.04.2_amd64.deb
-dpkg -i /tmp/libseccomp2.deb
-```
-
-**Gợi ý (không bắt buộc)**: đăng ký Ubuntu Pro miễn phí (tối đa 5 máy, tại ubuntu.com/pro) để 18.04
-tiếp tục nhận vá bảo mật kernel/OS qua ESM — `pro attach <token-lấy-từ-trang-đó>` sau khi
-`apt install -y ubuntu-advantage-tools`.
 
 ## 3. Đưa code lên VPS
 
@@ -130,7 +102,7 @@ Lúc này `http://YOUR_DOMAIN` đã lên được (chưa có HTTPS).
 
 ## 7. Bật HTTPS (Let's Encrypt)
 
-Cài certbot qua snap (18.04 có sẵn snapd) — cách chính thức Certbot khuyến nghị hiện nay, không phụ
+Cài certbot qua snap (24.04 có sẵn snapd) — cách chính thức Certbot khuyến nghị hiện nay, không phụ
 thuộc bản Ubuntu:
 
 ```bash
