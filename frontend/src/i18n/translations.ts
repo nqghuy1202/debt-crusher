@@ -42,6 +42,11 @@ export const translations: Record<Language, Record<string, string>> = {
     "auth.registerLink": "Đăng ký",
     "auth.loginFailed": "Đăng nhập thất bại",
     "auth.registerFailed": "Đăng ký thất bại",
+    "auth.errors.emailRequired": "Vui lòng nhập email",
+    "auth.errors.emailInvalid": "Email không hợp lệ",
+    "auth.errors.passwordRequired": "Vui lòng nhập mật khẩu",
+    "auth.errors.passwordTooShort": "Mật khẩu phải có ít nhất 8 ký tự",
+    "auth.errors.confirmPasswordRequired": "Vui lòng xác nhận mật khẩu",
 
     "debts.title": "Khoản nợ của bạn",
     "debts.subtitle": "Theo dõi và quản lý toàn bộ khoản nợ ở một nơi.",
@@ -152,6 +157,11 @@ export const translations: Record<Language, Record<string, string>> = {
     "auth.registerLink": "Sign up",
     "auth.loginFailed": "Login failed",
     "auth.registerFailed": "Registration failed",
+    "auth.errors.emailRequired": "Please enter your email",
+    "auth.errors.emailInvalid": "Invalid email address",
+    "auth.errors.passwordRequired": "Please enter your password",
+    "auth.errors.passwordTooShort": "Password must be at least 8 characters",
+    "auth.errors.confirmPasswordRequired": "Please confirm your password",
 
     "debts.title": "Your debts",
     "debts.subtitle": "Track and manage all your debts in one place.",
