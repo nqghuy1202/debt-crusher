@@ -59,6 +59,7 @@ export function LoginPage() {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    setError(null);
     const credentials = { email, password };
     const errors = validate(credentials);
     setFieldErrors(errors);
