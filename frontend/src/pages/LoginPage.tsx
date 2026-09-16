@@ -46,7 +46,7 @@ export function LoginPage() {
 
   return (
     <AuthShell title={t("auth.login.title")} subtitle={t("auth.login.subtitle")}>
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit} autoComplete="off">
         {error && (
           <p className="flex items-start gap-2 rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-400">
             <TriangleAlert size={16} className="mt-0.5 shrink-0" />
@@ -60,7 +60,7 @@ export function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            autoComplete="email"
+            autoComplete="off"
             placeholder={t("auth.emailPlaceholder")}
             className={inputClass}
           />
@@ -72,7 +72,7 @@ export function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            autoComplete="current-password"
+            autoComplete="new-password"
             placeholder="••••••••"
             className={inputClass}
           />
